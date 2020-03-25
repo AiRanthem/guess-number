@@ -1,0 +1,124 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <title>猜数字游戏</title>
+    <style>
+        .button {
+            background-color: rgba(208, 67, 212, 0.445);
+            border: none;
+            color: white;
+            padding: 15px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .guess {
+            text-align: center;
+            /*让div内部文字居中*/
+            background-color: rgba(102, 92, 196, 0.637);
+            border-radius: 20px;
+            width: 300px;
+            height: 450px;
+            margin: auto;
+            position: static;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            color: rgb(255, 255, 255);
+        }
+    </style>
+    <script>
+        function sample() {
+            var resl = new Array();
+            var temp, test;
+            var has = false
+            while (resl.length < 4) {
+                has = false;
+                temp = Math.floor(Math.random() * 10);
+                for (test in resl) {
+                    if (temp == resl[test])
+                        has = true;
+                }
+                if (!has) { resl.push(temp); }
+            }
+            return resl;
+        }
+        myNum = sample();
+        var patt = /\d{4}/;
+        var hint = new String();
+        var time = 1;
+        function play() {
+            var a = 0, b = 0, i, j;
+            var ans = $(":text").val();//获得回答
+            if (patt.test(ans)) {
+                for (i = 0; i < 4; i++) {
+                    if (ans.charAt(i) == myNum[i].toString()) {
+                        a++;
+                    } else {
+                        for (j = 0; j < 4; j++) {
+                            if (ans.charAt(i) == myNum[j].toString()) {
+                                b++;
+                            }
+                        }
+                    }
+                }
+                //找对错
+                if (time <= 8) {
+                    hint = hint + '第' + time + "次：" + ans + "。答案错误，提示：" + a + "A" + b + "B<br/>";
+                }
+                else {
+                    hint = hint + '第' + time + "次：" + ans + "。答案错误。<br/>";
+                }
+                //生成回应
+                if (a == 4) {
+                    var cong = "正确答案：" + ans + "!恭喜你，回答正确！回合数：" + time;
+                    alert(cong);
+                    $("#container").html('');
+                    myNum = sample();
+                    time = 1;
+                    hint = '';
+                    $(":text").val('').focus();
+                }//回答正确
+                else {
+                    time++;
+                    $("#container").html(hint);
+                    $(":text").val('').focus();
+                    if (time == 10) {
+                        var cong = "正确答案是：" + myNum.toString() + "你输了！";
+                        alert(cong);
+                        $("#container").html('');
+                        myNum = sample();
+                        time = 1;
+                        hint = '';
+                        $(":text").val('').focus();
+                    }
+                }//回答错误
+            }
+            else {
+                alert("请输入正确的四位数字！");
+                $(":text").focus();
+            }
+        }    
+    </script>
+</head>
+
+<body>
+    <h3 style="font-family: Microsoft Yahei UI;text-align: center">猜猜我的数字是几</h3>
+    <div class="guess">
+        <p id="container"></p>
+        <span style="font-family: Microsoft Yahei UI">我猜是</span>
+        <input type="text" maxlength="4">
+        <button type="button" class="button" onclick="play()">就是它！</button>
+    </div>
+</body>
+
+</html>
